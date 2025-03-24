@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payoff Opzioni</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="optionsChart" width="800" height="400"></canvas>
+    
+    <script>
+        // Parametri delle opzioni
+        const strikePrice = 100;  // Prezzo strike
+        const premium = 5;       // Premio dell'opzione
+        
+        // Funzioni di payoff
+        function callLongPayoff(price) {
+            return Math.max(0, price - strikePrice) - premium;
+        }
+        
+        function callShortPayoff(price) {
+            return premium - Math.max(0, price - strikePrice);
+        }
+        
+        function putLongPayoff(price) {
+            return Math.max(0, strikePrice - price) - premium;
+        }
+        
+        function putShortPayoff(price) {
+            return premium - Math.max(0, strikePrice - price);
+        }
+        
+        // Generazione dati
+        const prices = [];
+        const callLongData = [];
+        const callShortData = [];
+        const putLongData = [];
+        const putShortData = [];
+        
+        // Range di prezzi del sottostante (da 50 a 150)
+        for (let price = 50; price <= 150; price += 1) {
+            prices.push(price);
+            callLongData.push(callLongPayoff(price));
+            callShortData.push(callShortPayoff(price));
+            putLongData.push(putLongPayoff(price));
+            putShortData.push(putShortPayoff(price));
+        }
+        
+        // Configurazione del grafico
+        const ctx = document.getElementById('optionsChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: prices,
+                datasets: [
+                    {
+                        label: 'Call Long',
+                        data: callLongData,
+                        borderColor: 'blue',
+                        fill: false
+                    },
+                    {
+                        label: 'Call Short',
+                        data: callShortData,
+                        borderColor: 'red',
+                        fill: false
+                    },
+                    {
+                        label: 'Put Long',
+                        data: putLongData,
+                        borderColor: 'green',
+                        fill: false
+                    },
+                    {
+                        label: 'Put Short',
+                        data: putShortData,
+                        borderColor: 'orange',
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Payoff Opzioni (Strike: 100, Premium: 5)'
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Prezzo Sottostante'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Profitto/Perdita'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
